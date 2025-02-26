@@ -277,8 +277,8 @@ def rdp_algo(x, y, tolerance=5):
     # Use the Ramer-Douglas-Peucker algorithm to simplify the path
     # http://en.wikipedia.org/wiki/Ramer-Douglas-Peucker_algorithm
     # Python implementation: https://github.com/sebleier/RDP/
-    simplified_low = np.array(rdp.rdp(points, 3))
-    simplified_high = np.array(rdp.rdp(points, 15))
+    simplified_low = np.array(rdp.rdp(points, 0))
+    simplified_high = np.array(rdp.rdp(points, 20))
 
     sx_low, sy_low = simplified_low.T
     sx_high, sy_high = simplified_high.T  
