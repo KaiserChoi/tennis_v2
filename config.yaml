@@ -73,3 +73,4 @@ MODEL:
 INIT_WEIGHTS: true
 model_path: /weights/wasb_tennis_best.pth  # Adjust to your model path
 socket_url: wss://jason-shawjaine.top:8086/general
+cap_url: http://jason-shawjaine.top:7001/tennisVideo

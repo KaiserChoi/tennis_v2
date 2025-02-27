@@ -253,6 +253,7 @@ def rdp_algo(x, y, tolerance=5):
                     groups[-1].append(x)
                 else:
                     groups.append([x])
+            # print(groups)
             return groups
         
         def get_midpoint(groups):
