@@ -45,7 +45,7 @@ class TrackedObject:
         
         # 修正维度：将初始位置转换为列向量
         kf.x = np.zeros((4, 1))  # 初始化为4x1的列向量
-        kf.x[:2] = np.array(initial_pos).reshape(2, 1)  # 转换为2x1形状
+        kf.x[:2] = np.array(initial_pos['position']).reshape(2, 1)  # 转换为2x1形状
         return kf
 
     def update(self, position, new_feature=None):
@@ -371,7 +371,8 @@ class Tracker:
             if similarities:
                 best_idx, best_sim = max(similarities, key=lambda x: x[1])
                 if best_idx < len(remaining_dets):  # 添加索引范围检查
-                    if best_sim > self.reid_threshold:
+                    print(best_sim)
+                    if max(best_sim) > self.reid_threshold:
                         matched[obj_id] = remaining_dets[best_idx]
                         del remaining_dets[best_idx]
 
