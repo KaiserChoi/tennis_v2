@@ -330,14 +330,18 @@ class Tracker:
     def _match_detections(self, predictions, detections):
         """双重匹配逻辑：运动+外观"""
         matched = {}
-        remaining_dets = detections.copy()  # 使用检测副本而不是索引
+        remaining_dets = detections.copy()
         
         # 第一轮：运动匹配
         for obj_id, (pred_pos, _) in predictions.items():
             if not remaining_dets:
                 break
             
-            # 计算距离
+            # 计算距离并确保索引有效
+            valid_indices = [idx for idx in range(len(remaining_dets))]
+            if not valid_indices:
+                break
+                
             distances = [
                 (idx, np.linalg.norm(det['position'] - pred_pos.flatten()))
                 for idx, det in enumerate(remaining_dets)
@@ -345,16 +349,20 @@ class Tracker:
             
             if distances:
                 best_idx = min(distances, key=lambda x: x[1])[0]
-                if distances[best_idx][1] < self.dist_threshold:
-                    matched[obj_id] = remaining_dets[best_idx]
-                    del remaining_dets[best_idx]
+                if best_idx < len(remaining_dets):  # 添加索引范围检查
+                    if distances[best_idx][1] < self.dist_threshold:
+                        matched[obj_id] = remaining_dets[best_idx]
+                        del remaining_dets[best_idx]
 
         # 第二轮：外观匹配
         for obj_id, (_, obj_feat) in predictions.items():
             if obj_id in matched or not remaining_dets or obj_feat is None:
                 continue
             
-            # 计算相似度
+            # 添加空检测保护
+            if len(remaining_dets) == 0:
+                break
+                
             similarities = [
                 (idx, self._cosine_similarity(obj_feat, det['feature']))
                 for idx, det in enumerate(remaining_dets)
@@ -362,9 +370,10 @@ class Tracker:
             
             if similarities:
                 best_idx, best_sim = max(similarities, key=lambda x: x[1])
-                if best_sim > self.reid_threshold:
-                    matched[obj_id] = remaining_dets[best_idx]
-                    del remaining_dets[best_idx]
+                if best_idx < len(remaining_dets):  # 添加索引范围检查
+                    if best_sim > self.reid_threshold:
+                        matched[obj_id] = remaining_dets[best_idx]
+                        del remaining_dets[best_idx]
 
         unmatched = remaining_dets
         return matched, unmatched
