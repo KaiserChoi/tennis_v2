@@ -245,6 +245,9 @@ def rdp_algo(x, y, tolerance=5):
                 [[1, 6, 9], [99, 100, 102, 105], [134, 139, 141]]
 
             '''
+            if not ix:
+                return []
+            
             ix.sort()
             groups = [[ix[0]]]
             
@@ -263,13 +266,13 @@ def rdp_algo(x, y, tolerance=5):
                 mps.append(group[i])
             
             return mps
-        
-        groups = cluster_by_time(ix, 1)
-        #groups = cluster_by_space(groups, x, y, 15)
-        new_indices = get_midpoint(groups)
-
-        
-        return new_indices
+        if ix:
+            groups = cluster_by_time(ix, 1)
+            #groups = cluster_by_space(groups, x, y, 15)
+            new_indices = get_midpoint(groups)
+            return new_indices
+        else:
+            return []
 
     min_angle = 25 # min angle = 25 works fine, the smallest it is the better
 
@@ -278,7 +281,7 @@ def rdp_algo(x, y, tolerance=5):
     # Use the Ramer-Douglas-Peucker algorithm to simplify the path
     # http://en.wikipedia.org/wiki/Ramer-Douglas-Peucker_algorithm
     # Python implementation: https://github.com/sebleier/RDP/
-    simplified_low = np.array(rdp.rdp(points, 0))
+    simplified_low = np.array(rdp.rdp(points, 3))
     simplified_high = np.array(rdp.rdp(points, 20))
 
     sx_low, sy_low = simplified_low.T
@@ -449,7 +452,7 @@ def detect_bounces(trajectory): #  out_path, path_to_video, path_to_output_video
     bounce_df = pd.DataFrame({'x': x, 'y': y, 'bounce': [1 if i in ix_5 else 0 for i in range(len(x))]})
 
     # print(f'detect bounce at {len(trajectory)}')
-    # bounce_df.to_csv(out_path, index=False)
+    bounce_df.to_csv("HRnetv3_test_02.csv", index=False)
     # plot_bounces_plotly(x, y, sx_5, sy_5, ie)
     # draw_video(ie,x,y, path_to_video, path_to_output_video)
     return bounce_df, ix_5, x, y, ie
