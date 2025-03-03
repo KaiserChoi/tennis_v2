@@ -253,7 +253,7 @@ blocks_dict = {
 class HRNet(nn.Module):
 
     def __init__(self, cfg, **kwargs):
-        super(HRNet, self).__init__()
+        super().__init__()
 
         self._frames_in  = cfg['frames_in']
         self._frames_out = cfg['frames_out']
@@ -337,7 +337,7 @@ class HRNet(nn.Module):
         deconv_layers = []
         for i in range(deconv_cfg['NUM_DECONVS']): 
             output_channels                        = input_channels
-            deconv_kernel, padding, output_padding = self._get_deconv_cfg(deconv_cfg['KERNEL_SIZE'][i])
+            deconv_kernel, padding, output_padding = self._get_deconv_cfg(deconv_cfg.KERNEL_SIZE[i])
 
             layers = []
             layers.append(nn.Sequential(
@@ -530,5 +530,4 @@ if __name__=='__main__':
     #print(y[0].shape, y[1].shape)
     print(y.shape)
 """
-
 
